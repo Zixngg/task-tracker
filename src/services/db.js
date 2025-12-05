@@ -12,6 +12,29 @@ const setting = {
     dateStrings: true //return date as string instead of Date object
 }
 
+// Validate environment variables
+if (!setting.host || !setting.user || !setting.password || !setting.database) {
+    console.error('ERROR: Missing database environment variables!');
+    console.error('Required: DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE');
+    console.error('Current values:', {
+        host: setting.host ? 'SET' : 'MISSING',
+        user: setting.user ? 'SET' : 'MISSING',
+        password: setting.password ? 'SET' : 'MISSING',
+        database: setting.database ? 'SET' : 'MISSING'
+    });
+}
+
 const pool = mysql.createPool(setting);
+
+// Test the connection
+pool.getConnection((err, connection) => {
+    if (err) {
+        console.error('Database connection error:', err.message);
+        console.error('Error code:', err.code);
+    } else {
+        console.log('Database connected successfully');
+        connection.release();
+    }
+});
 
 module.exports = pool;
